@@ -15,6 +15,7 @@ class ModuleScopePlugin {
   constructor(appSrc, allowedFiles = []) {
     this.appSrcs = Array.isArray(appSrc) ? appSrc : [appSrc];
     this.allowedFiles = new Set(allowedFiles);
+    this.nodeModules = path.resolve(__dirname, '..');
   }
 
   apply(resolver) {
@@ -28,8 +29,7 @@ class ModuleScopePlugin {
         }
         if (
           // If this resolves to a node_module, we don't care what happens next
-          request.descriptionFileRoot.indexOf('/node_modules/') !== -1 ||
-          request.descriptionFileRoot.indexOf('\\node_modules\\') !== -1 ||
+          request.descriptionFileRoot.startsWith(this.nodeModules) ||
           // Make sure this request was manual
           !request.__innerRequest_request
         ) {
